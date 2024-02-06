@@ -3,7 +3,7 @@ title: "Activity 3 - MLR"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE,warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -30,8 +30,10 @@ Remember that [Emil Hvitfeldt](https://www.emilhvitfeldt.com/) (of Posit) has pu
   
 - Run the `load-packages` code chunk or **knit** <img src="../README-img/knit-icon.png" alt="knit" width = "20"/> icon your Rmd document to verify that no errors occur.
 
-```{r load-packages}
-
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(GGally)
+library(tidymodels)
 ```
 
 Since we will be looking at many relationships graphically, it will be nice to not have to code each of these individually.
@@ -61,6 +63,15 @@ Create a new R code chunk below that is titled `load-data` and reads in the abov
 - Rather than downloading this file, uploading to RStudio, then reading it in, explore how to load this file directly from the provided URL with `readr::read_tsv` (`{readr}` is part of `{tidyverse}`).
 - Assign this data set into a data frame named `hfi` (short for "Human Freedom Index").
 - Filter the data `hfi` data frame for year 2016 and assigns the result to an R data object named `hfi_2016`. You will use `hfi_2016` for the remainder of this activity.
+
+```{r loading the data}
+hfi <- read_csv('hfi.csv')
+
+hfi_2016 <- hfi %>% filter(year == 2016)
+
+glimpse(hfi_2016)
+```
+
 
 We will continue using personal freedom scores, `pf_score`, as the response variable and build on our model that had `pf_expression_control` as the explanatory variable. 
 
@@ -99,9 +110,9 @@ Now, we will obtain graphical and numerical summaries to describe the pairwise r
 - Replace `explanatory` in the `select` line with the variable you identified above
 - Run your code chunk or knit your document.
   
-```{verbatim pairs-plot}
+```{r pairs-plot}
 hfi_2016 %>% 
-  select(pf_score, pf_expression_control, explanatory) %>% 
+  select(pf_score, pf_expression_control, ef_legal) %>% 
   ggpairs()
 ```
 
@@ -109,7 +120,7 @@ Note that a warning message (really a list of warning messages) might display in
 In R, warning messages are not necessarily a bad thing and you should read these to make sure you understand what it is informing you of.
 To suppress warning messages from displaying after this specific R code chunk when you knit your report, add the follow inside the curly brackets (`{r }`) at the top of your R code chunk (notice the preceding comma): `, warning=FALSE`.
 
-Somewhat related... If you do not want all the messages `{tidyverse}` and `{tidymodels}` produce when you load them, you can add `, message=FALSE` to your `load-packages` R code chunk.
+Somewhat related... If you do not want all the messages `{tidyverse}` and `{tidymodels}` produce when you load them, you can add `, pf_movement` to your `load-packages` R code chunk.
 
 After running the `pairs-plot` code, answer the following questions:
 
@@ -136,7 +147,7 @@ $$
 - Replace `explanatory`, similarly to what you did in your `pairs-plot` R code chunk.
 - Run your code chunk or knit your document.
   
-```{verbatim mlr-model}
+```{r mlr-model}
 #fit the mlr model
 lm_spec <- linear_reg() %>%
   set_mode("regression") %>%
@@ -145,7 +156,7 @@ lm_spec <- linear_reg() %>%
 lm_spec
 
 mlr_mod <- lm_spec %>% 
-fit(pf_score ~ pf_expression_control + explanatory, data = hfi_2016)
+fit(pf_score ~ pf_expression_control + ef_legal, data = hfi_2016)
 
 # model output
 tidy(mlr_mod)
@@ -157,7 +168,11 @@ After doing this, answer the following questions:
   Remember in Activity 2 that this looked like:
 
 $$
-\hat{y} = b_0 + b_1 \times x_1
+\hat{y} = b_0 + b_1 \times x_1\\
+
+\hat{pf\\_score} = 3.361 + 0.428 \times x_1
+
+
 $$
   
   where $b_0$ and $b_1$ were your model parameter estimates.
