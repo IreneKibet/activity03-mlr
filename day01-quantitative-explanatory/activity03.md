@@ -371,11 +371,9 @@ After doing this, answer the following questions:
 4.  Using your output, write the complete estimated equation for this
     model. Remember in Activity 2 that this looked like:
 
-\$\$ = b_0 + b_1 x_1\\
+$$\hat{y} = b_0 + b_1 \times x_1$$
 
-= 3.361 + 0.428 x_1
-
-\$\$
+$$\hat{pf\\_score} = 3.361 + 0.428 \times x_1$$
 
 where $b_0$ and $b_1$ were your model parameter estimates. Note that
 your model here will be different (and have more terms).
